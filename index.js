@@ -24,7 +24,7 @@ const filesize = require("filesize");
 const octicons = require("@primer/octicons");
 const handlebars = require("handlebars");
 
-const port = +process.env.PORT || 8080;
+const port = +process.env.PORT || 80;//8080;
 
 const app = express();
 const http = app.listen(port);
