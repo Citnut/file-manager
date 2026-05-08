@@ -1,43 +1,50 @@
 # file-manager
 
-A basic node.js file manager.
+A node.js web-based file manager with session auth, bulk operations, and terminal access.
+
+Original by [serverwentdown](https://github.com/serverwentdown/file-manager). Forked and maintained by [Citnut](https://github.com/Citnut).
 
 ## Features
 
-- [x] [Simple authentication](https://github.com/ambrosechua/file-manager#key)
-- [x] Directory browsing
-  - [x] Filesize
-  - [ ] Permissions
-  - [ ] Owner
-- [x] Folder creation
-- [x] File uploads
-  - [ ] Bulk file uploads
-  - [ ] Large file uploads (sharded)
-- [x] File/folder renaming
-- [x] Previews for small image files
-- [x] Bulk file/folder selection
-  - [x] Delete
-    - [x] Recursive directory delete
-  - [ ] Move
-  - [ ] Copy
-  - [x] Download archive
-  - [ ] Change permissions
-- [x] Remote commands
+### File Operations
 
-## Usage
+- [x] Directory browsing with file listing
+  - [x] Filesize display
+  - [x] Permissions (POSIX mode string, e.g. `drwxr-xr-x`)
+  - [x] Owner / group display
+- [x] Create folders
+- [x] Upload files (single + bulk)
+- [x] Rename files / folders
+- [x] Delete files / folders (recursive for directories)
+- [x] Move files / folders to target directory
+- [x] Copy files / folders to target directory
+- [x] Change permissions (chmod, octal mode)
+- [x] Download selected files as ZIP archive
+- [x] Image preview for small images (< 750 KB)
 
-For users who prefer Docker:
+### Bulk Operations
 
-```zsh
-docker run --rm -it -v $PWD:/data -p 8080:8080 serverwentdown/file-manager
-```
+- [x] Multi-select via checkboxes
+- [x] Keyboard shortcuts: `Del` (delete), `Ctrl+A` (select all), `Esc` (deselect)
+- [x] Bulk delete, move, copy, chmod, download
 
-Or if you have Node.js installed:
+### Security (Phase 2)
 
-```zsh
-npm install -g https://github.com/serverwentdown/file-manager.git
-file-manager
-```
+- [x] TOTP authentication (`KEY` env variable)
+- [x] Rate limiting (global 120 req/min, auth 10/min, upload 60/min)
+- [x] CSRF guard on all mutating requests
+- [x] Filename sanitization (blocks null bytes, path traversal, hidden files)
+- [x] Command injection blocklist on CMD endpoint
+
+### Performance
+
+- [x] Directory pagination (100 items/page)
+- [x] Bulk upload via multi-file picker + fetch API
+
+### Terminal Access
+
+- [x] Single command execution (`CMD` env)
+- [x] Full shell access via xterm.js (`SHELL` env)
 
 ## Screenshots
 
@@ -53,26 +60,86 @@ These screenshots are not up-to-date.
 
 ![](https://ambrose.makerforce.io/file-manager/dl1.png)
 
-## Options
+## Quick Start
 
-The following environmental variables can be used to configure `file-manager`.
+### Docker
 
-### SESSION_KEY=
+```zsh
+docker run --rm -it -v $PWD:/data -p 8080:8080 serverwentdown/file-manager
+```
 
-Express session key, generate something random.
+### Node.js
 
-### SHELL=
+```zsh
+npm install
+npm start
+```
 
-Enable the shell feature, which allows users to start a login shell (when set to `login`) or the binary specified by this option (example: `/bin/bash`). Be careful when enabling this feature as anyone with access to this portal can execute any command on your machine.
+Then open `http://localhost` (port `80` by default).
 
-### CMD=
+Or globally:
 
-Set to something other than "false" to enable running single commands in the default shell, usually `/bin/sh`. Be careful when enabling this feature as anyone with access to this portal can execute any command on your machine.
+```zsh
+npm install -g https://github.com/Citnut/file-manager.git
+file-manager
+```
 
-### PORT=
+## Project Structure
 
-Listen on $PORT. Default: 8080
+```
+file-manager/
+├── src/
+│   ├── app.js              # Express app bootstrap + middleware
+│   ├── routes/
+│   │   ├── auth.js         # Login / logout (TOTP)
+│   │   ├── files.js        # Browse / mkdir / delete / rename / move / copy / chmod
+│   │   ├── upload.js       # File upload (busboy)
+│   │   └── shell.js        # CMD single-command + xterm.js WebSocket shell
+│   ├── services/
+│   │   ├── files.js        # fs operations, stat enrichment (mode, owner)
+│   │   └── archive.js      # ZIP archiver
+│   ├── middleware/
+│   │   ├── auth.js         # TOTP session auth
+│   │   ├── csrf.js         # Origin check guard
+│   │   ├── error.js        # Error boundary
+│   │   └── ratelimit.js    # express-rate-limit wrappers
+│   └── utils/
+│       ├── path.js         # Path resolution + traversal guard
+│       ├── flash.js        # connect-flash wrapper
+│       └── validate.js      # Sanitize, safe JSON, command validation
+├── views/
+│   ├── list.handlebars     # Main file browser
+│   ├── login.handlebars    # Login page
+│   ├── shell.handlebars    # xterm.js shell
+│   ├── cmd.handlebars      # CMD output
+│   └── partials/
+│       ├── navbar.handlebars
+│       ├── toolbar.handlebars
+│       └── dialogue-*.handlebars
+├── assets/
+│   ├── multi.js            # Multi-select + keyboard shortcuts
+│   ├── rename.js           # Rename modal + bulk upload
+│   └── *.css
+└── index.js                # Legacy entry point
+```
 
-### KEY=
+## Environment Variables
 
-Setting this variable enables authentication using TOTP (RFC6238). $KEY is a base32 encoded shared secret. This key is only a weak means of protection as it is succeptable to brute-force. You can generate one from [here](http://www.xanxys.net/totp/) or manually.
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `80` | Listen port |
+| `SESSION_KEY` | `meowmeow` | Express session secret (change in production) |
+| `KEY` | _(none)_ | Base32 TOTP shared secret. Enables auth when set. Generate one [here](http://www.xanxys.net/totp/) |
+| `CMD` | _(none)_ | Set to non-`false` to enable single-command execution |
+| `SHELL` | _(none)_ | `login` for login shell, or binary path (e.g. `/bin/bash`) |
+
+## Development
+
+```zsh
+npm run dev     # nodemon auto-restart on file changes
+npm run format  # prettier formatting
+```
+
+## License
+
+[MIT](./LICENSE)

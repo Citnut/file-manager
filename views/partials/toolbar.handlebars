@@ -6,6 +6,10 @@
 					{{octicon "upload"}}
 					<span class="d-none d-sm-inline align-text-bottom">Upload</span>
 				</a>
+				<a class="btn btn-primary" href="#" id="bulk-upload-btn" title="Upload multiple files" data-bs-placement="top">
+					{{octicon "multi-select"}}
+					<span class="d-none d-sm-inline align-text-bottom">Bulk upload</span>
+				</a>
 				<a class="btn btn-secondary" href="@mkdir" data-bs-toggle="modal" data-bs-target="#mkdir" title="Create a new folder" data-bs-placement="top">
 					{{octicon "file-directory"}}
 					<span class="d-none d-md-inline align-text-bottom">New folder</span>
@@ -37,6 +41,24 @@
 				<a class="btn btn-secondary" href="@rename" data-bs-toggle="modal" data-bs-target="#rename" title="Rename selected files" data-bs-placement="top">
 					{{octicon "pencil"}}
 					<span class="d-none d-lg-inline align-text-bottom">Rename</span>
+				</a>
+			</div>
+			<div class="btn-group me-2" role="group">
+				<a class="btn btn-secondary" href="@move" data-bs-toggle="modal" data-bs-target="#move" title="Move selected files" data-bs-placement="top">
+					{{octicon "arrow-right"}}
+					<span class="d-none d-lg-inline align-text-bottom">Move</span>
+				</a>
+			</div>
+			<div class="btn-group me-2" role="group">
+				<a class="btn btn-secondary" href="@copy" data-bs-toggle="modal" data-bs-target="#copy" title="Copy selected files" data-bs-placement="top">
+					{{octicon "copy"}}
+					<span class="d-none d-lg-inline align-text-bottom">Copy</span>
+				</a>
+			</div>
+			<div class="btn-group me-2" role="group">
+				<a class="btn btn-secondary" href="@chmod" data-bs-toggle="modal" data-bs-target="#chmod" title="Change permissions" data-bs-placement="top">
+					{{octicon "lock"}}
+					<span class="d-none d-lg-inline align-text-bottom">Chmod</span>
 				</a>
 			</div>
 			<div class="btn-group me-2" role="group">

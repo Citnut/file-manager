@@ -4,3 +4,22 @@
   overflow: hidden;
   padding-right: 5.4em;
 }
+
+/* Pagination */
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+.pagination-info {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+.pagination-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+.pagination-controls button {
+  min-width: 2.5rem;
+}
