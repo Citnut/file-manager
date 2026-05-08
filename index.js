@@ -138,9 +138,9 @@ app.use((req, res, next) => {
 });
 
 function relative(...paths) {
-  const finalPath = paths.reduce((a, b) => path.join(a, b), process.cwd());
-  if (path.relative(process.cwd(), finalPath).startsWith("..")) {
-    throw new Error("Failed to resolve path outside of the working directory");
+  const finalPath = paths.reduce((a, b) => path.join(a, b), "/");
+  if (path.relative("/", finalPath).startsWith("..")) {
+    throw new Error("Failed to resolve path outside of the root filesystem");
   }
   return finalPath;
 }

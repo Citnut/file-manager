@@ -21,7 +21,7 @@
     "express-session": "^1.17.2",
     "filesize": "^8.0.6",
     "jquery": "^3.6.0",
-    "node-pty": "^0.10.1",
+    "node-pty": "^1.0.0",
     "notp": "^2.0.3",
     "rimraf": "^3.0.2",
     "thirty-two": "^1.0.2",
